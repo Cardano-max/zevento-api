@@ -89,27 +89,27 @@ export class AuthService {
     });
 
     if (!user) {
+      // Create user with the requested role (or CUSTOMER by default)
+      const initialRole = requestedRole ?? 'CUSTOMER';
       user = await this.prisma.user.create({
         data: {
           phone,
           roles: {
-            create: {
-              role: 'CUSTOMER',
-            },
+            create: { role: initialRole },
           },
         },
         include: { roles: true },
       });
-      this.logger.log(`New user created: ${user.id} (${phone})`);
+      this.logger.log(`New user created: ${user.id} (${phone}) with role ${initialRole}`);
     }
 
-    // If user has no active roles, grant CUSTOMER role
+    // If user has no active roles, grant the requested role (or CUSTOMER)
     const activeRoles = user.roles.filter((r) => r.isActive);
     if (activeRoles.length === 0) {
       const newRole = await this.prisma.userRole.create({
         data: {
           userId: user.id,
-          role: 'CUSTOMER',
+          role: requestedRole ?? 'CUSTOMER',
         },
       });
       user.roles.push(newRole);
@@ -122,9 +122,10 @@ export class AuthService {
     if (requestedRole) {
       const hasRole = refreshedActiveRoles.some((r) => r.role === requestedRole);
       if (!hasRole) {
-        throw new UnauthorizedException(
-          `User does not have the role: ${requestedRole}`,
-        );
+        // Grant the requested role on-the-fly (handles existing users switching roles)
+        await this.prisma.userRole.create({
+          data: { userId: user.id, role: requestedRole },
+        });
       }
       activeRole = requestedRole;
     } else {
