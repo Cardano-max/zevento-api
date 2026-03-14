@@ -38,8 +38,8 @@ let AuthService = AuthService_1 = class AuthService {
         await this.otp.storeOtp(phone, code);
         await this.msg91.sendOtp(phone, code);
         const masked = `****${phone.slice(-4)}`;
-        if (process.env.OTP_TEST_MODE === 'true') {
-            return { message: 'OTP sent', phone: masked, otp: code };
+        if (process.env.OTP_BYPASS_CODE) {
+            return { message: 'OTP sent', phone: masked, otp: process.env.OTP_BYPASS_CODE };
         }
         return { message: 'OTP sent', phone: masked };
     }
