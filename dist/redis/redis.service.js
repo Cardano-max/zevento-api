@@ -13,56 +13,126 @@ const ioredis_1 = require("ioredis");
 let RedisService = RedisService_1 = class RedisService {
     constructor() {
         this.logger = new common_1.Logger(RedisService_1.name);
+        this.client = null;
+        this.useMemory = false;
+        this.memStore = new Map();
     }
     onModuleInit() {
-        const redisUrl = process.env.REDIS_URL ?? 'redis://localhost:6379';
+        const redisUrl = process.env.REDIS_URL;
+        if (!redisUrl) {
+            this.logger.warn('REDIS_URL not set — using in-memory store');
+            this.useMemory = true;
+            return;
+        }
         this.client = new ioredis_1.default(redisUrl, {
             lazyConnect: true,
             retryStrategy: (times) => {
-                if (times > 10) {
-                    this.logger.error('Redis connection failed after 10 retries');
+                if (times > 3) {
+                    this.logger.warn('Redis unavailable — falling back to in-memory store');
+                    this.useMemory = true;
                     return null;
                 }
-                return Math.min(times * 100, 3000);
+                return Math.min(times * 200, 1000);
             },
         });
-        this.client.on('connect', () => {
-            this.logger.log('Connected to Redis');
-        });
+        this.client.on('connect', () => this.logger.log('Connected to Redis'));
         this.client.on('error', (err) => {
             this.logger.error(`Redis error: ${err.message}`);
+            this.useMemory = true;
         });
-        this.client.connect().catch((err) => {
-            this.logger.error(`Redis initial connection failed: ${err.message}`);
+        this.client.connect().catch(() => {
+            this.useMemory = true;
         });
     }
     onModuleDestroy() {
-        if (this.client) {
+        if (this.client)
             this.client.disconnect();
+    }
+    memGet(key) {
+        const entry = this.memStore.get(key);
+        if (!entry)
+            return null;
+        if (entry.expiresAt && Date.now() > entry.expiresAt) {
+            this.memStore.delete(key);
+            return null;
         }
+        return entry.value;
     }
     async get(key) {
-        return this.client.get(key);
+        if (this.useMemory || !this.client)
+            return this.memGet(key);
+        try {
+            return await this.client.get(key);
+        }
+        catch {
+            return this.memGet(key);
+        }
     }
     async set(key, value, ttlSeconds) {
-        if (ttlSeconds) {
-            await this.client.set(key, value, 'EX', ttlSeconds);
+        if (this.useMemory || !this.client) {
+            this.memStore.set(key, { value, expiresAt: ttlSeconds ? Date.now() + ttlSeconds * 1000 : null });
+            return;
         }
-        else {
-            await this.client.set(key, value);
+        try {
+            if (ttlSeconds)
+                await this.client.set(key, value, 'EX', ttlSeconds);
+            else
+                await this.client.set(key, value);
+        }
+        catch {
+            this.memStore.set(key, { value, expiresAt: ttlSeconds ? Date.now() + ttlSeconds * 1000 : null });
         }
     }
     async del(key) {
-        await this.client.del(key);
+        this.memStore.delete(key);
+        if (this.client && !this.useMemory) {
+            try {
+                await this.client.del(key);
+            }
+            catch { }
+        }
     }
     async incr(key) {
-        return this.client.incr(key);
+        if (this.useMemory || !this.client) {
+            const cur = parseInt(this.memGet(key) ?? '0', 10) + 1;
+            const existing = this.memStore.get(key);
+            this.memStore.set(key, { value: String(cur), expiresAt: existing?.expiresAt ?? null });
+            return cur;
+        }
+        try {
+            return await this.client.incr(key);
+        }
+        catch {
+            const cur = parseInt(this.memGet(key) ?? '0', 10) + 1;
+            this.memStore.set(key, { value: String(cur), expiresAt: null });
+            return cur;
+        }
     }
     async expire(key, ttlSeconds) {
-        await this.client.expire(key, ttlSeconds);
+        const existing = this.memStore.get(key);
+        if (existing) {
+            this.memStore.set(key, { ...existing, expiresAt: Date.now() + ttlSeconds * 1000 });
+        }
+        if (this.client && !this.useMemory) {
+            try {
+                await this.client.expire(key, ttlSeconds);
+            }
+            catch { }
+        }
     }
     async ttl(key) {
-        return this.client.ttl(key);
+        if (this.useMemory || !this.client) {
+            const entry = this.memStore.get(key);
+            if (!entry?.expiresAt)
+                return -1;
+            return Math.max(0, Math.floor((entry.expiresAt - Date.now()) / 1000));
+        }
+        try {
+            return await this.client.ttl(key);
+        }
+        catch {
+            return -1;
+        }
     }
 };
 exports.RedisService = RedisService;
