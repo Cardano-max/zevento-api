@@ -8,18 +8,24 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
 
   // Enable CORS for all frontend apps
-  const allowedOrigins = process.env.CORS_ORIGINS
+  const staticOrigins = process.env.CORS_ORIGINS
     ? process.env.CORS_ORIGINS.split(',').map((o) => o.trim())
     : [
         'http://localhost:3000',
         'http://localhost:3002',
         'http://localhost:3003',
-        'https://vendor-sooty.vercel.app',
-        'https://admin-roan-one-51.vercel.app',
       ];
 
   app.enableCors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      // Allow all Vercel preview and production deployments
+      if (origin.endsWith('.vercel.app')) return callback(null, true);
+      // Allow configured static origins
+      if (staticOrigins.includes(origin)) return callback(null, true);
+      callback(new Error('Not allowed by CORS'));
+    },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -87,6 +93,12 @@ async function bootstrap() {
       filter: true,
       tagsSorter: 'alpha',
     },
+  });
+
+  // Health check endpoint for Render
+  const httpAdapter = app.getHttpAdapter();
+  httpAdapter.get('/health', (_req: any, res: any) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
   const port = process.env.PORT ?? 3001;

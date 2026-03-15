@@ -1,5 +1,17 @@
-import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CustomerService } from './customer.service';
 import { SearchVendorsDto } from './dto/search-vendors.dto';
 
@@ -21,5 +33,71 @@ export class CustomerController {
   @Get('vendors/:id')
   getVendorProfile(@Param('id', ParseUUIDPipe) id: string) {
     return this.customerService.getVendorProfile(id);
+  }
+
+  // ──────────────────────────────────────────────────
+  // Phase 07.2: Favorites
+  // ──────────────────────────────────────────────────
+
+  @Get('favorites')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT')
+  getFavorites(@CurrentUser() user: { id: string }) {
+    return this.customerService.getFavorites(user.id);
+  }
+
+  @Post('favorites/:vendorId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT')
+  addFavorite(
+    @CurrentUser() user: { id: string },
+    @Param('vendorId', ParseUUIDPipe) vendorId: string,
+  ) {
+    return this.customerService.addFavorite(user.id, vendorId);
+  }
+
+  @Delete('favorites/:vendorId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT')
+  removeFavorite(
+    @CurrentUser() user: { id: string },
+    @Param('vendorId', ParseUUIDPipe) vendorId: string,
+  ) {
+    return this.customerService.removeFavorite(user.id, vendorId);
+  }
+
+  @Get('favorites/:vendorId/check')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT')
+  checkFavorite(
+    @CurrentUser() user: { id: string },
+    @Param('vendorId', ParseUUIDPipe) vendorId: string,
+  ) {
+    return this.customerService.checkFavorite(user.id, vendorId);
+  }
+
+  // ──────────────────────────────────────────────────
+  // Quick-002: Customer Messaging
+  // ──────────────────────────────────────────────────
+
+  @Post('messages/:vendorId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT')
+  sendMessage(
+    @CurrentUser() user: { id: string },
+    @Param('vendorId', ParseUUIDPipe) vendorId: string,
+    @Body('body') body: string,
+  ) {
+    return this.customerService.sendMessageAsCustomer(user.id, vendorId, body);
+  }
+
+  @Get('messages/:vendorId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT')
+  getMessages(
+    @CurrentUser() user: { id: string },
+    @Param('vendorId', ParseUUIDPipe) vendorId: string,
+  ) {
+    return this.customerService.getConversationMessages(user.id, vendorId);
   }
 }
