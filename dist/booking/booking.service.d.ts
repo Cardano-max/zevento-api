@@ -25,9 +25,9 @@ export declare class BookingService {
         status: string;
         leadId: string;
         vendorId: string;
+        customerId: string;
         razorpayOrderId: string | null;
         quoteId: string;
-        customerId: string;
         confirmedAt: Date;
         completedAt: Date | null;
         cancelledAt: Date | null;
@@ -61,8 +61,8 @@ export declare class BookingService {
             createdAt: Date;
             updatedAt: Date;
             vendorId: string;
-            bookingId: string;
             customerId: string;
+            bookingId: string;
             respondedAt: Date | null;
             rating: number;
             comment: string | null;
@@ -91,9 +91,9 @@ export declare class BookingService {
         status: string;
         leadId: string;
         vendorId: string;
+        customerId: string;
         razorpayOrderId: string | null;
         quoteId: string;
-        customerId: string;
         confirmedAt: Date;
         completedAt: Date | null;
         cancelledAt: Date | null;

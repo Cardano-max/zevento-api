@@ -177,6 +177,22 @@ let CustomerService = class CustomerService {
                         },
                     },
                 },
+                services: {
+                    where: { isActive: true },
+                    orderBy: { createdAt: 'desc' },
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        pricePaise: true,
+                        images: true,
+                        category: { select: { id: true, name: true } },
+                    },
+                },
+                blockedDates: {
+                    select: { date: true, reason: true },
+                    orderBy: { date: 'asc' },
+                },
                 status: true,
             },
         });
@@ -211,7 +227,109 @@ let CustomerService = class CustomerService {
             averageRating: vendor.stats?.averageRating ?? null,
             responseRate: vendor.stats?.responseRate ?? null,
             subscriptionTier: vendor.subscription?.plan?.tier ?? null,
+            services: vendor.services,
+            blockedDates: vendor.blockedDates,
         };
+    }
+    async getFavorites(userId) {
+        const favorites = await this.prisma.favoriteVendor.findMany({
+            where: { customerId: userId },
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                createdAt: true,
+                vendor: {
+                    select: {
+                        id: true,
+                        businessName: true,
+                        description: true,
+                        pricingMin: true,
+                        pricingMax: true,
+                        stats: { select: { averageRating: true } },
+                    },
+                },
+            },
+        });
+        return favorites.map((f) => ({
+            favoriteId: f.id,
+            createdAt: f.createdAt,
+            vendor: {
+                id: f.vendor.id,
+                businessName: f.vendor.businessName,
+                description: f.vendor.description,
+                pricingMin: f.vendor.pricingMin,
+                pricingMax: f.vendor.pricingMax,
+                averageRating: f.vendor.stats?.averageRating ?? null,
+            },
+        }));
+    }
+    async addFavorite(userId, vendorId) {
+        const vendor = await this.prisma.vendorProfile.findUnique({
+            where: { id: vendorId },
+        });
+        if (!vendor) {
+            throw new common_1.NotFoundException('Vendor not found');
+        }
+        const existing = await this.prisma.favoriteVendor.findUnique({
+            where: { customerId_vendorId: { customerId: userId, vendorId } },
+        });
+        if (existing) {
+            throw new common_1.ConflictException('Vendor already in favorites');
+        }
+        return this.prisma.favoriteVendor.create({
+            data: { customerId: userId, vendorId },
+            select: { id: true, createdAt: true, vendorId: true },
+        });
+    }
+    async removeFavorite(userId, vendorId) {
+        const favorite = await this.prisma.favoriteVendor.findUnique({
+            where: { customerId_vendorId: { customerId: userId, vendorId } },
+        });
+        if (!favorite) {
+            throw new common_1.NotFoundException('Favorite not found');
+        }
+        await this.prisma.favoriteVendor.delete({
+            where: { customerId_vendorId: { customerId: userId, vendorId } },
+        });
+        return { message: 'Removed from favorites' };
+    }
+    async checkFavorite(userId, vendorId) {
+        const favorite = await this.prisma.favoriteVendor.findUnique({
+            where: { customerId_vendorId: { customerId: userId, vendorId } },
+        });
+        return { isFavorited: !!favorite };
+    }
+    async startOrGetConversation(customerId, vendorId) {
+        return this.prisma.conversation.upsert({
+            where: { customerId_vendorId: { customerId, vendorId } },
+            create: { customerId, vendorId },
+            update: {},
+            include: {
+                vendor: { select: { id: true, businessName: true } },
+                messages: { orderBy: { createdAt: 'asc' } },
+            },
+        });
+    }
+    async sendMessageAsCustomer(customerId, vendorId, body) {
+        const conv = await this.startOrGetConversation(customerId, vendorId);
+        const msg = await this.prisma.message.create({
+            data: { conversationId: conv.id, senderId: customerId, senderRole: 'CUSTOMER', body },
+        });
+        await this.prisma.conversation.update({ where: { id: conv.id }, data: { updatedAt: new Date() } });
+        return msg;
+    }
+    async getConversationMessages(customerId, vendorId) {
+        const conv = await this.prisma.conversation.findFirst({ where: { customerId, vendorId } });
+        if (!conv)
+            return [];
+        await this.prisma.message.updateMany({
+            where: { conversationId: conv.id, senderRole: 'VENDOR', readAt: null },
+            data: { readAt: new Date() },
+        });
+        return this.prisma.message.findMany({
+            where: { conversationId: conv.id },
+            orderBy: { createdAt: 'asc' },
+        });
     }
 };
 exports.CustomerService = CustomerService;

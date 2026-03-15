@@ -144,23 +144,32 @@ export declare class AdminService {
                 cloudinaryUrl: string;
             }[];
         } & {
+            phone: string | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
             role: string;
             userId: string;
-            businessName: string;
             description: string | null;
+            status: string;
+            businessName: string;
             pricingMin: number | null;
             pricingMax: number | null;
             onboardingStep: number;
-            status: string;
             rejectionReason: string | null;
             submittedAt: Date | null;
             approvedAt: Date | null;
             bankAccountName: string | null;
             bankAccountNumber: string | null;
             bankIfsc: string | null;
+            contactEmail: string | null;
+            websiteUrl: string | null;
+            instagramUrl: string | null;
+            facebookUrl: string | null;
+            yearsExperience: number | null;
+            ownerName: string | null;
+            tiktokUrl: string | null;
+            youtubeUrl: string | null;
         })[];
         total: number;
         page: number;
@@ -208,8 +217,8 @@ export declare class AdminService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                status: string;
                 city: string;
+                status: string;
                 state: string;
                 launchDate: Date | null;
                 latitude: number | null;
@@ -255,23 +264,32 @@ export declare class AdminService {
             currentPeriodEnd: Date | null;
         }) | null;
     } & {
+        phone: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         role: string;
         userId: string;
-        businessName: string;
         description: string | null;
+        status: string;
+        businessName: string;
         pricingMin: number | null;
         pricingMax: number | null;
         onboardingStep: number;
-        status: string;
         rejectionReason: string | null;
         submittedAt: Date | null;
         approvedAt: Date | null;
         bankAccountName: string | null;
         bankAccountNumber: string | null;
         bankIfsc: string | null;
+        contactEmail: string | null;
+        websiteUrl: string | null;
+        instagramUrl: string | null;
+        facebookUrl: string | null;
+        yearsExperience: number | null;
+        ownerName: string | null;
+        tiktokUrl: string | null;
+        youtubeUrl: string | null;
     }>;
     reviewKyc(vendorId: string, dto: ReviewKycDto, adminUserId: string): Promise<{
         user: {
@@ -280,23 +298,32 @@ export declare class AdminService {
             name: string | null;
         };
     } & {
+        phone: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         role: string;
         userId: string;
-        businessName: string;
         description: string | null;
+        status: string;
+        businessName: string;
         pricingMin: number | null;
         pricingMax: number | null;
         onboardingStep: number;
-        status: string;
         rejectionReason: string | null;
         submittedAt: Date | null;
         approvedAt: Date | null;
         bankAccountName: string | null;
         bankAccountNumber: string | null;
         bankIfsc: string | null;
+        contactEmail: string | null;
+        websiteUrl: string | null;
+        instagramUrl: string | null;
+        facebookUrl: string | null;
+        yearsExperience: number | null;
+        ownerName: string | null;
+        tiktokUrl: string | null;
+        youtubeUrl: string | null;
     }>;
     suspendVendor(vendorId: string): Promise<{
         user: {
@@ -305,23 +332,32 @@ export declare class AdminService {
             name: string | null;
         };
     } & {
+        phone: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         role: string;
         userId: string;
-        businessName: string;
         description: string | null;
+        status: string;
+        businessName: string;
         pricingMin: number | null;
         pricingMax: number | null;
         onboardingStep: number;
-        status: string;
         rejectionReason: string | null;
         submittedAt: Date | null;
         approvedAt: Date | null;
         bankAccountName: string | null;
         bankAccountNumber: string | null;
         bankIfsc: string | null;
+        contactEmail: string | null;
+        websiteUrl: string | null;
+        instagramUrl: string | null;
+        facebookUrl: string | null;
+        yearsExperience: number | null;
+        ownerName: string | null;
+        tiktokUrl: string | null;
+        youtubeUrl: string | null;
     }>;
     reactivateVendor(vendorId: string): Promise<{
         user: {
@@ -330,23 +366,32 @@ export declare class AdminService {
             name: string | null;
         };
     } & {
+        phone: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         role: string;
         userId: string;
-        businessName: string;
         description: string | null;
+        status: string;
+        businessName: string;
         pricingMin: number | null;
         pricingMax: number | null;
         onboardingStep: number;
-        status: string;
         rejectionReason: string | null;
         submittedAt: Date | null;
         approvedAt: Date | null;
         bankAccountName: string | null;
         bankAccountNumber: string | null;
         bankIfsc: string | null;
+        contactEmail: string | null;
+        websiteUrl: string | null;
+        instagramUrl: string | null;
+        facebookUrl: string | null;
+        yearsExperience: number | null;
+        ownerName: string | null;
+        tiktokUrl: string | null;
+        youtubeUrl: string | null;
     }>;
     listVendors(status?: string, role?: string, page?: number, limit?: number): Promise<{
         data: ({
@@ -363,23 +408,32 @@ export declare class AdminService {
                 };
             } | null;
         } & {
+            phone: string | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
             role: string;
             userId: string;
-            businessName: string;
             description: string | null;
+            status: string;
+            businessName: string;
             pricingMin: number | null;
             pricingMax: number | null;
             onboardingStep: number;
-            status: string;
             rejectionReason: string | null;
             submittedAt: Date | null;
             approvedAt: Date | null;
             bankAccountName: string | null;
             bankAccountNumber: string | null;
             bankIfsc: string | null;
+            contactEmail: string | null;
+            websiteUrl: string | null;
+            instagramUrl: string | null;
+            facebookUrl: string | null;
+            yearsExperience: number | null;
+            ownerName: string | null;
+            tiktokUrl: string | null;
+            youtubeUrl: string | null;
         })[];
         total: number;
         page: number;
@@ -728,15 +782,15 @@ export declare class AdminService {
     }>;
     listMarkets(): Promise<{
         id: string;
-        status: string;
         city: string;
+        status: string;
         state: string;
         launchDate: Date | null;
     }[]>;
     updateMarketStatus(marketId: string, dto: MarketStatusDto): Promise<{
         id: string;
-        status: string;
         city: string;
+        status: string;
         state: string;
         launchDate: Date | null;
     }>;

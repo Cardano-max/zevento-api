@@ -13,18 +13,18 @@ export declare class CatalogService {
                 name: string;
                 slug: string;
             };
-            vendor: {
-                id: string;
-                businessName: string;
-            };
             pricePaise: number;
-            stock: number;
-            moq: number;
-            fulfillmentSource: string;
             images: {
                 id: string;
                 cloudinaryUrl: string;
             }[];
+            vendor: {
+                id: string;
+                businessName: string;
+            };
+            stock: number;
+            moq: number;
+            fulfillmentSource: string;
         }[];
         pagination: {
             page: number;
@@ -39,15 +39,15 @@ export declare class CatalogService {
             name: string;
             slug: string;
         };
-        vendor: {
-            id: string;
-            businessName: string;
-        };
         images: {
             id: string;
             sortOrder: number;
             cloudinaryUrl: string;
         }[];
+        vendor: {
+            id: string;
+            businessName: string;
+        };
     } & {
         id: string;
         name: string;
@@ -56,8 +56,8 @@ export declare class CatalogService {
         updatedAt: Date;
         description: string | null;
         categoryId: string;
-        vendorId: string;
         pricePaise: number;
+        vendorId: string;
         stock: number;
         lowStockThreshold: number;
         moq: number;

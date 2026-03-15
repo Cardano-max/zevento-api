@@ -58,41 +58,74 @@ let VendorService = class VendorService {
             dto.pricingMax < dto.pricingMin) {
             throw new common_1.BadRequestException('pricingMax must be greater than or equal to pricingMin');
         }
-        const categories = await this.prisma.eventCategory.findMany({
-            where: { id: { in: dto.categoryIds }, isActive: true },
-            select: { id: true },
-        });
-        if (categories.length !== dto.categoryIds.length) {
-            throw new common_1.BadRequestException('One or more category IDs are invalid or inactive');
+        const profileUpdateData = {};
+        if (dto.businessName !== undefined)
+            profileUpdateData.businessName = dto.businessName;
+        if (dto.description !== undefined)
+            profileUpdateData.description = dto.description;
+        if (dto.pricingMin !== undefined)
+            profileUpdateData.pricingMin = dto.pricingMin;
+        if (dto.pricingMax !== undefined)
+            profileUpdateData.pricingMax = dto.pricingMax;
+        if (dto.contactEmail !== undefined)
+            profileUpdateData.contactEmail = dto.contactEmail;
+        if (dto.websiteUrl !== undefined)
+            profileUpdateData.websiteUrl = dto.websiteUrl;
+        if (dto.instagramUrl !== undefined)
+            profileUpdateData.instagramUrl = dto.instagramUrl;
+        if (dto.facebookUrl !== undefined)
+            profileUpdateData.facebookUrl = dto.facebookUrl;
+        if (dto.yearsExperience !== undefined)
+            profileUpdateData.yearsExperience = dto.yearsExperience;
+        if (dto.ownerName !== undefined)
+            profileUpdateData.ownerName = dto.ownerName;
+        if (dto.phone !== undefined)
+            profileUpdateData.phone = dto.phone;
+        if (dto.tiktokUrl !== undefined)
+            profileUpdateData.tiktokUrl = dto.tiktokUrl;
+        if (dto.youtubeUrl !== undefined)
+            profileUpdateData.youtubeUrl = dto.youtubeUrl;
+        profileUpdateData.onboardingStep = Math.max(profile.onboardingStep, 2);
+        if (profile.status === shared_1.VendorStatus.REJECTED) {
+            profileUpdateData.status = shared_1.VendorStatus.DRAFT;
+            profileUpdateData.rejectionReason = null;
         }
-        return this.prisma.$transaction(async (tx) => {
-            await tx.vendorCategory.deleteMany({ where: { vendorId } });
-            await tx.vendorCategory.createMany({
-                data: dto.categoryIds.map((categoryId) => ({
-                    vendorId,
-                    categoryId,
-                })),
+        if (dto.categoryIds && dto.categoryIds.length > 0) {
+            const categories = await this.prisma.eventCategory.findMany({
+                where: { id: { in: dto.categoryIds }, isActive: true },
+                select: { id: true },
             });
-            return tx.vendorProfile.update({
-                where: { id: vendorId },
-                data: {
-                    businessName: dto.businessName,
-                    description: dto.description,
-                    pricingMin: dto.pricingMin,
-                    pricingMax: dto.pricingMax,
-                    onboardingStep: Math.max(profile.onboardingStep, 2),
-                    ...(profile.status === shared_1.VendorStatus.REJECTED
-                        ? { status: shared_1.VendorStatus.DRAFT, rejectionReason: null }
-                        : {}),
-                },
-                include: {
-                    categories: { include: { category: true } },
-                    photos: { orderBy: { sortOrder: 'asc' } },
-                    serviceAreas: { include: { market: true } },
-                    kycDocuments: true,
-                    subscription: { include: { plan: true } },
-                },
+            if (categories.length !== dto.categoryIds.length) {
+                throw new common_1.BadRequestException('One or more category IDs are invalid or inactive');
+            }
+            return this.prisma.$transaction(async (tx) => {
+                await tx.vendorCategory.deleteMany({ where: { vendorId } });
+                await tx.vendorCategory.createMany({
+                    data: dto.categoryIds.map((categoryId) => ({ vendorId, categoryId })),
+                });
+                return tx.vendorProfile.update({
+                    where: { id: vendorId },
+                    data: profileUpdateData,
+                    include: {
+                        categories: { include: { category: true } },
+                        photos: { orderBy: { sortOrder: 'asc' } },
+                        serviceAreas: { include: { market: true } },
+                        kycDocuments: true,
+                        subscription: { include: { plan: true } },
+                    },
+                });
             });
+        }
+        return this.prisma.vendorProfile.update({
+            where: { id: vendorId },
+            data: profileUpdateData,
+            include: {
+                categories: { include: { category: true } },
+                photos: { orderBy: { sortOrder: 'asc' } },
+                serviceAreas: { include: { market: true } },
+                kycDocuments: true,
+                subscription: { include: { plan: true } },
+            },
         });
     }
     async uploadPhoto(vendorId, file, dto) {
@@ -286,6 +319,73 @@ let VendorService = class VendorService {
             throw new common_1.NotFoundException('Vendor profile not found. Create a profile first.');
         }
         return profile;
+    }
+    async createService(vendorId, dto) {
+        return this.prisma.vendorService.create({
+            data: { vendorId, ...dto },
+            include: { category: { select: { id: true, name: true } } },
+        });
+    }
+    async listServices(vendorId) {
+        return this.prisma.vendorService.findMany({
+            where: { vendorId },
+            orderBy: { createdAt: 'desc' },
+            include: { category: { select: { id: true, name: true } } },
+        });
+    }
+    async updateService(vendorId, serviceId, dto) {
+        const svc = await this.prisma.vendorService.findFirst({ where: { id: serviceId, vendorId } });
+        if (!svc)
+            throw new common_1.NotFoundException('Service not found');
+        return this.prisma.vendorService.update({
+            where: { id: serviceId },
+            data: dto,
+            include: { category: { select: { id: true, name: true } } },
+        });
+    }
+    async deleteService(vendorId, serviceId) {
+        const svc = await this.prisma.vendorService.findFirst({ where: { id: serviceId, vendorId } });
+        if (!svc)
+            throw new common_1.NotFoundException('Service not found');
+        await this.prisma.vendorService.delete({ where: { id: serviceId } });
+        return { deleted: true };
+    }
+    async listConversations(vendorId) {
+        return this.prisma.conversation.findMany({
+            where: { vendorId },
+            orderBy: { updatedAt: 'desc' },
+            include: {
+                customer: { select: { id: true, name: true, phone: true } },
+                messages: { orderBy: { createdAt: 'desc' }, take: 1 },
+            },
+        });
+    }
+    async getConversationMessages(vendorId, conversationId) {
+        const conv = await this.prisma.conversation.findFirst({ where: { id: conversationId, vendorId } });
+        if (!conv)
+            throw new common_1.NotFoundException('Conversation not found');
+        await this.prisma.message.updateMany({
+            where: { conversationId, senderRole: 'CUSTOMER', readAt: null },
+            data: { readAt: new Date() },
+        });
+        return this.prisma.message.findMany({
+            where: { conversationId },
+            orderBy: { createdAt: 'asc' },
+        });
+    }
+    async sendMessageAsVendor(vendorId, conversationId, body) {
+        const conv = await this.prisma.conversation.findFirst({ where: { id: conversationId, vendorId } });
+        if (!conv)
+            throw new common_1.NotFoundException('Conversation not found');
+        const vendorProfile = await this.prisma.vendorProfile.findUnique({
+            where: { id: vendorId },
+            select: { userId: true },
+        });
+        const msg = await this.prisma.message.create({
+            data: { conversationId, senderId: vendorProfile.userId, senderRole: 'VENDOR', body },
+        });
+        await this.prisma.conversation.update({ where: { id: conversationId }, data: { updatedAt: new Date() } });
+        return msg;
     }
     async findProfileOrThrow(vendorId) {
         const profile = await this.prisma.vendorProfile.findUnique({

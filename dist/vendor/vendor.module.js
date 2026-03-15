@@ -16,7 +16,7 @@ let VendorModule = class VendorModule {
 exports.VendorModule = VendorModule;
 exports.VendorModule = VendorModule = __decorate([
     (0, common_1.Module)({
-        controllers: [vendor_controller_1.VendorController],
+        controllers: [vendor_controller_1.VendorController, vendor_controller_1.VendorServicesController, vendor_controller_1.VendorConversationsController],
         providers: [vendor_service_1.VendorService, vendor_owner_guard_1.VendorOwnerGuard],
         exports: [vendor_service_1.VendorService, vendor_owner_guard_1.VendorOwnerGuard],
     })

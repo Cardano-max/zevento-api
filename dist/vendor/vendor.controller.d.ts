@@ -1,9 +1,11 @@
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { VendorService } from './vendor.service';
-import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
 import { UpdateServiceAreaDto } from './dto/update-service-area.dto';
 import { SubmitKycDto } from './dto/submit-kyc.dto';
+import { CreateServiceDto } from './dto/create-service.dto';
+import { UpdateServiceDto } from './dto/update-service.dto';
+import { UpdateBusinessProfileDto } from './dto/update-business-profile.dto';
 export declare class VendorController {
     private readonly vendorService;
     constructor(vendorService: VendorService);
@@ -40,8 +42,8 @@ export declare class VendorController {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                status: string;
                 city: string;
+                status: string;
                 state: string;
                 launchDate: Date | null;
                 latitude: number | null;
@@ -87,25 +89,34 @@ export declare class VendorController {
             currentPeriodEnd: Date | null;
         }) | null;
     } & {
+        phone: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         role: string;
         userId: string;
-        businessName: string;
         description: string | null;
+        status: string;
+        businessName: string;
         pricingMin: number | null;
         pricingMax: number | null;
         onboardingStep: number;
-        status: string;
         rejectionReason: string | null;
         submittedAt: Date | null;
         approvedAt: Date | null;
         bankAccountName: string | null;
         bankAccountNumber: string | null;
         bankIfsc: string | null;
+        contactEmail: string | null;
+        websiteUrl: string | null;
+        instagramUrl: string | null;
+        facebookUrl: string | null;
+        yearsExperience: number | null;
+        ownerName: string | null;
+        tiktokUrl: string | null;
+        youtubeUrl: string | null;
     }>;
-    updateBusinessDetails(req: any, dto: CreateProfileDto): Promise<{
+    updateBusinessDetails(req: any, dto: UpdateBusinessProfileDto): Promise<{
         categories: ({
             category: {
                 id: string;
@@ -138,8 +149,8 @@ export declare class VendorController {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                status: string;
                 city: string;
+                status: string;
                 state: string;
                 launchDate: Date | null;
                 latitude: number | null;
@@ -185,23 +196,32 @@ export declare class VendorController {
             currentPeriodEnd: Date | null;
         }) | null;
     } & {
+        phone: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         role: string;
         userId: string;
-        businessName: string;
         description: string | null;
+        status: string;
+        businessName: string;
         pricingMin: number | null;
         pricingMax: number | null;
         onboardingStep: number;
-        status: string;
         rejectionReason: string | null;
         submittedAt: Date | null;
         approvedAt: Date | null;
         bankAccountName: string | null;
         bankAccountNumber: string | null;
         bankIfsc: string | null;
+        contactEmail: string | null;
+        websiteUrl: string | null;
+        instagramUrl: string | null;
+        facebookUrl: string | null;
+        yearsExperience: number | null;
+        ownerName: string | null;
+        tiktokUrl: string | null;
+        youtubeUrl: string | null;
     }>;
     uploadPhoto(req: any, file: Express.Multer.File, dto: UpdatePortfolioDto): Promise<{
         id: string;
@@ -241,8 +261,8 @@ export declare class VendorController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            status: string;
             city: string;
+            status: string;
             state: string;
             launchDate: Date | null;
             latitude: number | null;
@@ -296,8 +316,8 @@ export declare class VendorController {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                status: string;
                 city: string;
+                status: string;
                 state: string;
                 launchDate: Date | null;
                 latitude: number | null;
@@ -343,23 +363,32 @@ export declare class VendorController {
             currentPeriodEnd: Date | null;
         }) | null;
     } & {
+        phone: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         role: string;
         userId: string;
-        businessName: string;
         description: string | null;
+        status: string;
+        businessName: string;
         pricingMin: number | null;
         pricingMax: number | null;
         onboardingStep: number;
-        status: string;
         rejectionReason: string | null;
         submittedAt: Date | null;
         approvedAt: Date | null;
         bankAccountName: string | null;
         bankAccountNumber: string | null;
         bankIfsc: string | null;
+        contactEmail: string | null;
+        websiteUrl: string | null;
+        instagramUrl: string | null;
+        facebookUrl: string | null;
+        yearsExperience: number | null;
+        ownerName: string | null;
+        tiktokUrl: string | null;
+        youtubeUrl: string | null;
     }>;
     getMyProfile(user: JwtPayload): Promise<{
         categories: ({
@@ -394,8 +423,8 @@ export declare class VendorController {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                status: string;
                 city: string;
+                status: string;
                 state: string;
                 launchDate: Date | null;
                 latitude: number | null;
@@ -441,22 +470,133 @@ export declare class VendorController {
             currentPeriodEnd: Date | null;
         }) | null;
     } & {
+        phone: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         role: string;
         userId: string;
-        businessName: string;
         description: string | null;
+        status: string;
+        businessName: string;
         pricingMin: number | null;
         pricingMax: number | null;
         onboardingStep: number;
-        status: string;
         rejectionReason: string | null;
         submittedAt: Date | null;
         approvedAt: Date | null;
         bankAccountName: string | null;
         bankAccountNumber: string | null;
         bankIfsc: string | null;
+        contactEmail: string | null;
+        websiteUrl: string | null;
+        instagramUrl: string | null;
+        facebookUrl: string | null;
+        yearsExperience: number | null;
+        ownerName: string | null;
+        tiktokUrl: string | null;
+        youtubeUrl: string | null;
+    }>;
+}
+export declare class VendorServicesController {
+    private readonly vendorService;
+    constructor(vendorService: VendorService);
+    listServices(req: any): Promise<({
+        category: {
+            id: string;
+            name: string;
+        } | null;
+    } & {
+        id: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        description: string | null;
+        title: string;
+        categoryId: string | null;
+        pricePaise: number;
+        images: import("@prisma/client/runtime/library").JsonValue | null;
+        vendorId: string;
+    })[]>;
+    createService(req: any, dto: CreateServiceDto): Promise<{
+        category: {
+            id: string;
+            name: string;
+        } | null;
+    } & {
+        id: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        description: string | null;
+        title: string;
+        categoryId: string | null;
+        pricePaise: number;
+        images: import("@prisma/client/runtime/library").JsonValue | null;
+        vendorId: string;
+    }>;
+    updateService(req: any, id: string, dto: UpdateServiceDto): Promise<{
+        category: {
+            id: string;
+            name: string;
+        } | null;
+    } & {
+        id: string;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        description: string | null;
+        title: string;
+        categoryId: string | null;
+        pricePaise: number;
+        images: import("@prisma/client/runtime/library").JsonValue | null;
+        vendorId: string;
+    }>;
+    deleteService(req: any, id: string): Promise<{
+        deleted: boolean;
+    }>;
+}
+export declare class VendorConversationsController {
+    private readonly vendorService;
+    constructor(vendorService: VendorService);
+    listConversations(req: any): Promise<({
+        customer: {
+            phone: string;
+            id: string;
+            name: string | null;
+        };
+        messages: {
+            id: string;
+            createdAt: Date;
+            body: string;
+            conversationId: string;
+            senderRole: string;
+            readAt: Date | null;
+            senderId: string;
+        }[];
+    } & {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        vendorId: string;
+        customerId: string;
+    })[]>;
+    getMessages(req: any, id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        body: string;
+        conversationId: string;
+        senderRole: string;
+        readAt: Date | null;
+        senderId: string;
+    }[]>;
+    sendMessage(req: any, id: string, body: string): Promise<{
+        id: string;
+        createdAt: Date;
+        body: string;
+        conversationId: string;
+        senderRole: string;
+        readAt: Date | null;
+        senderId: string;
     }>;
 }

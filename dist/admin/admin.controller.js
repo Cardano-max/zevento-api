@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
+const feed_service_1 = require("../feed/feed.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const admin_service_1 = require("./admin.service");
@@ -30,8 +31,9 @@ const market_status_dto_1 = require("./dto/market-status.dto");
 const review_kyc_dto_1 = require("./dto/review-kyc.dto");
 const routing_override_dto_1 = require("./dto/routing-override.dto");
 let AdminController = class AdminController {
-    constructor(adminService) {
+    constructor(adminService, feedService) {
         this.adminService = adminService;
+        this.feedService = feedService;
     }
     async listUsers(page = '1', limit = '20', role) {
         return this.adminService.listUsers(parseInt(page, 10), parseInt(limit, 10), role);
@@ -134,6 +136,12 @@ let AdminController = class AdminController {
     }
     async updateMarketStatus(marketId, dto) {
         return this.adminService.updateMarketStatus(marketId, dto);
+    }
+    async toggleHideFeedPost(id) {
+        return this.feedService.toggleHidePost(id);
+    }
+    async deleteFeedPost(id) {
+        return this.feedService.adminDeletePost(id);
     }
 };
 exports.AdminController = AdminController;
@@ -399,12 +407,27 @@ __decorate([
     __metadata("design:paramtypes", [String, market_status_dto_1.MarketStatusDto]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "updateMarketStatus", null);
+__decorate([
+    (0, common_1.Patch)('feed/:id/hide'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "toggleHideFeedPost", null);
+__decorate([
+    (0, common_1.Delete)('feed/:id'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "deleteFeedPost", null);
 exports.AdminController = AdminController = __decorate([
     (0, swagger_1.ApiTags)('Admin'),
     (0, swagger_1.ApiBearerAuth)('JWT'),
     (0, common_1.Controller)('admin'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('ADMIN'),
-    __metadata("design:paramtypes", [admin_service_1.AdminService])
+    __metadata("design:paramtypes", [admin_service_1.AdminService,
+        feed_service_1.FeedService])
 ], AdminController);
 //# sourceMappingURL=admin.controller.js.map

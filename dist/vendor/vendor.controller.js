@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VendorController = void 0;
+exports.VendorConversationsController = exports.VendorServicesController = exports.VendorController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const swagger_1 = require("@nestjs/swagger");
@@ -23,10 +23,12 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const vendor_owner_guard_1 = require("./guards/vendor-owner.guard");
 const vendor_service_1 = require("./vendor.service");
-const create_profile_dto_1 = require("./dto/create-profile.dto");
 const update_portfolio_dto_1 = require("./dto/update-portfolio.dto");
 const update_service_area_dto_1 = require("./dto/update-service-area.dto");
 const submit_kyc_dto_1 = require("./dto/submit-kyc.dto");
+const create_service_dto_1 = require("./dto/create-service.dto");
+const update_service_dto_1 = require("./dto/update-service.dto");
+const update_business_profile_dto_1 = require("./dto/update-business-profile.dto");
 const IMAGE_MIMETYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const DOCUMENT_MIMETYPES = [...IMAGE_MIMETYPES, 'application/pdf'];
 function imageFileFilter(_req, file, callback) {
@@ -96,7 +98,7 @@ __decorate([
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, create_profile_dto_1.CreateProfileDto]),
+    __metadata("design:paramtypes", [Object, update_business_profile_dto_1.UpdateBusinessProfileDto]),
     __metadata("design:returntype", void 0)
 ], VendorController.prototype, "updateBusinessDetails", null);
 __decorate([
@@ -187,4 +189,109 @@ exports.VendorController = VendorController = __decorate([
     (0, roles_decorator_1.Roles)('PLANNER', 'SUPPLIER'),
     __metadata("design:paramtypes", [vendor_service_1.VendorService])
 ], VendorController);
+let VendorServicesController = class VendorServicesController {
+    constructor(vendorService) {
+        this.vendorService = vendorService;
+    }
+    listServices(req) {
+        return this.vendorService.listServices(req.vendorId);
+    }
+    createService(req, dto) {
+        return this.vendorService.createService(req.vendorId, dto);
+    }
+    updateService(req, id, dto) {
+        return this.vendorService.updateService(req.vendorId, id, dto);
+    }
+    deleteService(req, id) {
+        return this.vendorService.deleteService(req.vendorId, id);
+    }
+};
+exports.VendorServicesController = VendorServicesController;
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], VendorServicesController.prototype, "listServices", null);
+__decorate([
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, create_service_dto_1.CreateServiceDto]),
+    __metadata("design:returntype", void 0)
+], VendorServicesController.prototype, "createService", null);
+__decorate([
+    (0, common_1.Patch)(':id'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, update_service_dto_1.UpdateServiceDto]),
+    __metadata("design:returntype", void 0)
+], VendorServicesController.prototype, "updateService", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], VendorServicesController.prototype, "deleteService", null);
+exports.VendorServicesController = VendorServicesController = __decorate([
+    (0, swagger_1.ApiTags)('Vendor Services'),
+    (0, swagger_1.ApiBearerAuth)('JWT'),
+    (0, common_1.Controller)('vendor/services'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, vendor_owner_guard_1.VendorOwnerGuard),
+    (0, roles_decorator_1.Roles)('PLANNER', 'SUPPLIER'),
+    __metadata("design:paramtypes", [vendor_service_1.VendorService])
+], VendorServicesController);
+let VendorConversationsController = class VendorConversationsController {
+    constructor(vendorService) {
+        this.vendorService = vendorService;
+    }
+    listConversations(req) {
+        return this.vendorService.listConversations(req.vendorId);
+    }
+    getMessages(req, id) {
+        return this.vendorService.getConversationMessages(req.vendorId, id);
+    }
+    sendMessage(req, id, body) {
+        return this.vendorService.sendMessageAsVendor(req.vendorId, id, body);
+    }
+};
+exports.VendorConversationsController = VendorConversationsController;
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], VendorConversationsController.prototype, "listConversations", null);
+__decorate([
+    (0, common_1.Get)(':id/messages'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], VendorConversationsController.prototype, "getMessages", null);
+__decorate([
+    (0, common_1.Post)(':id/messages'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __param(2, (0, common_1.Body)('body')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:returntype", void 0)
+], VendorConversationsController.prototype, "sendMessage", null);
+exports.VendorConversationsController = VendorConversationsController = __decorate([
+    (0, swagger_1.ApiTags)('Vendor Messaging'),
+    (0, swagger_1.ApiBearerAuth)('JWT'),
+    (0, common_1.Controller)('vendor/conversations'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard, vendor_owner_guard_1.VendorOwnerGuard),
+    (0, roles_decorator_1.Roles)('PLANNER', 'SUPPLIER'),
+    __metadata("design:paramtypes", [vendor_service_1.VendorService])
+], VendorConversationsController);
 //# sourceMappingURL=vendor.controller.js.map

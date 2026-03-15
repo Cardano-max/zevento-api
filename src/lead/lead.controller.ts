@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import type { Request as ExpressRequest } from 'express';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateInquiryDto } from './dto/create-inquiry.dto';
@@ -27,7 +27,7 @@ export class LeadController {
   async createInquiry(
     @CurrentUser() user: any,
     @Body() dto: CreateInquiryDto,
-    @Req() req: Request,
+    @Req() req: any,
   ) {
     const ipAddress =
       (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||

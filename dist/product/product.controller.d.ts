@@ -24,8 +24,8 @@ export declare class ProductController {
         updatedAt: Date;
         description: string | null;
         categoryId: string;
-        vendorId: string;
         pricePaise: number;
+        vendorId: string;
         stock: number;
         lowStockThreshold: number;
         moq: number;
@@ -51,8 +51,8 @@ export declare class ProductController {
         updatedAt: Date;
         description: string | null;
         categoryId: string;
-        vendorId: string;
         pricePaise: number;
+        vendorId: string;
         stock: number;
         lowStockThreshold: number;
         moq: number;
@@ -80,8 +80,8 @@ export declare class ProductController {
             updatedAt: Date;
             description: string | null;
             categoryId: string;
-            vendorId: string;
             pricePaise: number;
+            vendorId: string;
             stock: number;
             lowStockThreshold: number;
             moq: number;
@@ -113,8 +113,8 @@ export declare class ProductController {
         updatedAt: Date;
         description: string | null;
         categoryId: string;
-        vendorId: string;
         pricePaise: number;
+        vendorId: string;
         stock: number;
         lowStockThreshold: number;
         moq: number;

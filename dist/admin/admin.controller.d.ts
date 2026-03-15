@@ -1,3 +1,4 @@
+import { FeedService } from '../feed/feed.service';
 import { AdminService } from './admin.service';
 import { AnalyticsQueryDto } from './dto/analytics-query.dto';
 import { InitiateRefundDto } from './dto/initiate-refund.dto';
@@ -10,7 +11,8 @@ import { ReviewKycDto } from './dto/review-kyc.dto';
 import { RoutingOverrideDto } from './dto/routing-override.dto';
 export declare class AdminController {
     private readonly adminService;
-    constructor(adminService: AdminService);
+    private readonly feedService;
+    constructor(adminService: AdminService, feedService: FeedService);
     listUsers(page?: string, limit?: string, role?: string): Promise<{
         data: ({
             roles: {
@@ -118,23 +120,32 @@ export declare class AdminController {
                 };
             } | null;
         } & {
+            phone: string | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
             role: string;
             userId: string;
-            businessName: string;
             description: string | null;
+            status: string;
+            businessName: string;
             pricingMin: number | null;
             pricingMax: number | null;
             onboardingStep: number;
-            status: string;
             rejectionReason: string | null;
             submittedAt: Date | null;
             approvedAt: Date | null;
             bankAccountName: string | null;
             bankAccountNumber: string | null;
             bankIfsc: string | null;
+            contactEmail: string | null;
+            websiteUrl: string | null;
+            instagramUrl: string | null;
+            facebookUrl: string | null;
+            yearsExperience: number | null;
+            ownerName: string | null;
+            tiktokUrl: string | null;
+            youtubeUrl: string | null;
         })[];
         total: number;
         page: number;
@@ -180,23 +191,32 @@ export declare class AdminController {
                 cloudinaryUrl: string;
             }[];
         } & {
+            phone: string | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
             role: string;
             userId: string;
-            businessName: string;
             description: string | null;
+            status: string;
+            businessName: string;
             pricingMin: number | null;
             pricingMax: number | null;
             onboardingStep: number;
-            status: string;
             rejectionReason: string | null;
             submittedAt: Date | null;
             approvedAt: Date | null;
             bankAccountName: string | null;
             bankAccountNumber: string | null;
             bankIfsc: string | null;
+            contactEmail: string | null;
+            websiteUrl: string | null;
+            instagramUrl: string | null;
+            facebookUrl: string | null;
+            yearsExperience: number | null;
+            ownerName: string | null;
+            tiktokUrl: string | null;
+            youtubeUrl: string | null;
         })[];
         total: number;
         page: number;
@@ -244,8 +264,8 @@ export declare class AdminController {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                status: string;
                 city: string;
+                status: string;
                 state: string;
                 launchDate: Date | null;
                 latitude: number | null;
@@ -291,23 +311,32 @@ export declare class AdminController {
             currentPeriodEnd: Date | null;
         }) | null;
     } & {
+        phone: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         role: string;
         userId: string;
-        businessName: string;
         description: string | null;
+        status: string;
+        businessName: string;
         pricingMin: number | null;
         pricingMax: number | null;
         onboardingStep: number;
-        status: string;
         rejectionReason: string | null;
         submittedAt: Date | null;
         approvedAt: Date | null;
         bankAccountName: string | null;
         bankAccountNumber: string | null;
         bankIfsc: string | null;
+        contactEmail: string | null;
+        websiteUrl: string | null;
+        instagramUrl: string | null;
+        facebookUrl: string | null;
+        yearsExperience: number | null;
+        ownerName: string | null;
+        tiktokUrl: string | null;
+        youtubeUrl: string | null;
     }>;
     reviewKyc(vendorId: string, dto: ReviewKycDto, currentUser: {
         id: string;
@@ -318,23 +347,32 @@ export declare class AdminController {
             name: string | null;
         };
     } & {
+        phone: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         role: string;
         userId: string;
-        businessName: string;
         description: string | null;
+        status: string;
+        businessName: string;
         pricingMin: number | null;
         pricingMax: number | null;
         onboardingStep: number;
-        status: string;
         rejectionReason: string | null;
         submittedAt: Date | null;
         approvedAt: Date | null;
         bankAccountName: string | null;
         bankAccountNumber: string | null;
         bankIfsc: string | null;
+        contactEmail: string | null;
+        websiteUrl: string | null;
+        instagramUrl: string | null;
+        facebookUrl: string | null;
+        yearsExperience: number | null;
+        ownerName: string | null;
+        tiktokUrl: string | null;
+        youtubeUrl: string | null;
     }>;
     suspendVendor(vendorId: string): Promise<{
         user: {
@@ -343,23 +381,32 @@ export declare class AdminController {
             name: string | null;
         };
     } & {
+        phone: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         role: string;
         userId: string;
-        businessName: string;
         description: string | null;
+        status: string;
+        businessName: string;
         pricingMin: number | null;
         pricingMax: number | null;
         onboardingStep: number;
-        status: string;
         rejectionReason: string | null;
         submittedAt: Date | null;
         approvedAt: Date | null;
         bankAccountName: string | null;
         bankAccountNumber: string | null;
         bankIfsc: string | null;
+        contactEmail: string | null;
+        websiteUrl: string | null;
+        instagramUrl: string | null;
+        facebookUrl: string | null;
+        yearsExperience: number | null;
+        ownerName: string | null;
+        tiktokUrl: string | null;
+        youtubeUrl: string | null;
     }>;
     reactivateVendor(vendorId: string): Promise<{
         user: {
@@ -368,23 +415,32 @@ export declare class AdminController {
             name: string | null;
         };
     } & {
+        phone: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         role: string;
         userId: string;
-        businessName: string;
         description: string | null;
+        status: string;
+        businessName: string;
         pricingMin: number | null;
         pricingMax: number | null;
         onboardingStep: number;
-        status: string;
         rejectionReason: string | null;
         submittedAt: Date | null;
         approvedAt: Date | null;
         bankAccountName: string | null;
         bankAccountNumber: string | null;
         bankIfsc: string | null;
+        contactEmail: string | null;
+        websiteUrl: string | null;
+        instagramUrl: string | null;
+        facebookUrl: string | null;
+        yearsExperience: number | null;
+        ownerName: string | null;
+        tiktokUrl: string | null;
+        youtubeUrl: string | null;
     }>;
     createCategory(dto: CreateCategoryDto): Promise<{
         id: string;
@@ -724,16 +780,23 @@ export declare class AdminController {
     }>;
     listMarkets(): Promise<{
         id: string;
-        status: string;
         city: string;
+        status: string;
         state: string;
         launchDate: Date | null;
     }[]>;
     updateMarketStatus(marketId: string, dto: MarketStatusDto): Promise<{
         id: string;
-        status: string;
         city: string;
+        status: string;
         state: string;
         launchDate: Date | null;
+    }>;
+    toggleHideFeedPost(id: string): Promise<{
+        id: string;
+        status: string;
+    }>;
+    deleteFeedPost(id: string): Promise<{
+        message: string;
     }>;
 }

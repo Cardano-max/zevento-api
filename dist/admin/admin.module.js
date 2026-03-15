@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminModule = void 0;
 const common_1 = require("@nestjs/common");
 const auth_module_1 = require("../auth/auth.module");
+const feed_module_1 = require("../feed/feed.module");
 const notification_module_1 = require("../notification/notification.module");
 const prisma_module_1 = require("../prisma/prisma.module");
 const subscription_module_1 = require("../subscription/subscription.module");
@@ -19,7 +20,7 @@ let AdminModule = class AdminModule {
 exports.AdminModule = AdminModule;
 exports.AdminModule = AdminModule = __decorate([
     (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule, subscription_module_1.SubscriptionModule, notification_module_1.NotificationModule],
+        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule, subscription_module_1.SubscriptionModule, notification_module_1.NotificationModule, feed_module_1.FeedModule],
         controllers: [admin_controller_1.AdminController],
         providers: [admin_service_1.AdminService],
     })

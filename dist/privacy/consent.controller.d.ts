@@ -1,14 +1,18 @@
-import { Request } from 'express';
 import { ConsentService } from './consent.service';
 import { AuditLogService } from './audit-log.service';
 import { GrantConsentDto } from './dto/grant-consent.dto';
 import { RevokeConsentDto } from './dto/revoke-consent.dto';
-interface AuthenticatedRequest extends Request {
+interface AuthenticatedRequest {
     user: {
         id: string;
         activeRole?: string;
         role?: string;
     };
+    headers: Record<string, any>;
+    socket?: {
+        remoteAddress?: string;
+    };
+    ip?: string;
 }
 export declare class ConsentController {
     private readonly consentService;

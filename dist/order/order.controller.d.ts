@@ -7,10 +7,6 @@ export declare class OrderController {
     private readonly orderService;
     constructor(orderService: OrderService);
     createOrder(dto: CreateOrderDto, user: JwtPayload): Promise<{
-        vendor: {
-            id: string;
-            businessName: string;
-        };
         items: ({
             product: {
                 id: string;
@@ -25,6 +21,10 @@ export declare class OrderController {
             productId: string;
             unitPaise: number;
         })[];
+        vendor: {
+            id: string;
+            businessName: string;
+        };
     } & {
         id: string;
         createdAt: Date;
@@ -114,22 +114,6 @@ export declare class OrderController {
         };
     }>;
     getOrderById(id: string): Promise<{
-        vendor: {
-            id: string;
-            businessName: string;
-        };
-        statusHistory: {
-            id: string;
-            note: string | null;
-            changedAt: Date;
-            fromStatus: string | null;
-            toStatus: string;
-            orderId: string;
-        }[];
-        buyer: {
-            phone: string;
-            id: string;
-        };
         items: ({
             product: {
                 id: string;
@@ -147,6 +131,22 @@ export declare class OrderController {
             productId: string;
             unitPaise: number;
         })[];
+        vendor: {
+            id: string;
+            businessName: string;
+        };
+        statusHistory: {
+            id: string;
+            note: string | null;
+            changedAt: Date;
+            fromStatus: string | null;
+            toStatus: string;
+            orderId: string;
+        }[];
+        buyer: {
+            phone: string;
+            id: string;
+        };
     } & {
         id: string;
         createdAt: Date;
@@ -166,6 +166,20 @@ export declare class OrderController {
         deliveredAt: Date | null;
     }>;
     cancelOrder(id: string, user: JwtPayload): Promise<({
+        items: ({
+            product: {
+                id: string;
+                name: string;
+                pricePaise: number;
+            };
+        } & {
+            id: string;
+            totalPaise: number;
+            quantity: number;
+            orderId: string;
+            productId: string;
+            unitPaise: number;
+        })[];
         vendor: {
             id: string;
             businessName: string;
@@ -182,20 +196,6 @@ export declare class OrderController {
             phone: string;
             id: string;
         };
-        items: ({
-            product: {
-                id: string;
-                name: string;
-                pricePaise: number;
-            };
-        } & {
-            id: string;
-            totalPaise: number;
-            quantity: number;
-            orderId: string;
-            productId: string;
-            unitPaise: number;
-        })[];
     } & {
         id: string;
         createdAt: Date;
@@ -215,6 +215,20 @@ export declare class OrderController {
         deliveredAt: Date | null;
     }) | null>;
     transitionStatus(id: string, dto: TransitionOrderStatusDto, user: JwtPayload): Promise<({
+        items: ({
+            product: {
+                id: string;
+                name: string;
+                pricePaise: number;
+            };
+        } & {
+            id: string;
+            totalPaise: number;
+            quantity: number;
+            orderId: string;
+            productId: string;
+            unitPaise: number;
+        })[];
         vendor: {
             id: string;
             businessName: string;
@@ -231,20 +245,6 @@ export declare class OrderController {
             phone: string;
             id: string;
         };
-        items: ({
-            product: {
-                id: string;
-                name: string;
-                pricePaise: number;
-            };
-        } & {
-            id: string;
-            totalPaise: number;
-            quantity: number;
-            orderId: string;
-            productId: string;
-            unitPaise: number;
-        })[];
     } & {
         id: string;
         createdAt: Date;

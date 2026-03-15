@@ -10,10 +10,6 @@ export declare class OrderService {
     private readonly logger;
     constructor(prisma: PrismaService, notificationService: NotificationService, stockAlertQueue: Queue);
     createOrder(buyerId: string, dto: CreateOrderDto): Promise<{
-        vendor: {
-            id: string;
-            businessName: string;
-        };
         items: ({
             product: {
                 id: string;
@@ -28,6 +24,10 @@ export declare class OrderService {
             productId: string;
             unitPaise: number;
         })[];
+        vendor: {
+            id: string;
+            businessName: string;
+        };
     } & {
         id: string;
         createdAt: Date;
@@ -47,22 +47,6 @@ export declare class OrderService {
         deliveredAt: Date | null;
     }>;
     getOrderById(orderId: string): Promise<{
-        vendor: {
-            id: string;
-            businessName: string;
-        };
-        statusHistory: {
-            id: string;
-            note: string | null;
-            changedAt: Date;
-            fromStatus: string | null;
-            toStatus: string;
-            orderId: string;
-        }[];
-        buyer: {
-            phone: string;
-            id: string;
-        };
         items: ({
             product: {
                 id: string;
@@ -80,6 +64,22 @@ export declare class OrderService {
             productId: string;
             unitPaise: number;
         })[];
+        vendor: {
+            id: string;
+            businessName: string;
+        };
+        statusHistory: {
+            id: string;
+            note: string | null;
+            changedAt: Date;
+            fromStatus: string | null;
+            toStatus: string;
+            orderId: string;
+        }[];
+        buyer: {
+            phone: string;
+            id: string;
+        };
     } & {
         id: string;
         createdAt: Date;
@@ -167,6 +167,20 @@ export declare class OrderService {
         };
     }>;
     cancelOrder(orderId: string, requesterId: string, requesterRole: string): Promise<({
+        items: ({
+            product: {
+                id: string;
+                name: string;
+                pricePaise: number;
+            };
+        } & {
+            id: string;
+            totalPaise: number;
+            quantity: number;
+            orderId: string;
+            productId: string;
+            unitPaise: number;
+        })[];
         vendor: {
             id: string;
             businessName: string;
@@ -183,20 +197,6 @@ export declare class OrderService {
             phone: string;
             id: string;
         };
-        items: ({
-            product: {
-                id: string;
-                name: string;
-                pricePaise: number;
-            };
-        } & {
-            id: string;
-            totalPaise: number;
-            quantity: number;
-            orderId: string;
-            productId: string;
-            unitPaise: number;
-        })[];
     } & {
         id: string;
         createdAt: Date;
@@ -216,6 +216,20 @@ export declare class OrderService {
         deliveredAt: Date | null;
     }) | null>;
     transitionOrderStatus(orderId: string, dto: TransitionOrderStatusDto, requesterId: string, requesterRole: string): Promise<({
+        items: ({
+            product: {
+                id: string;
+                name: string;
+                pricePaise: number;
+            };
+        } & {
+            id: string;
+            totalPaise: number;
+            quantity: number;
+            orderId: string;
+            productId: string;
+            unitPaise: number;
+        })[];
         vendor: {
             id: string;
             businessName: string;
@@ -232,20 +246,6 @@ export declare class OrderService {
             phone: string;
             id: string;
         };
-        items: ({
-            product: {
-                id: string;
-                name: string;
-                pricePaise: number;
-            };
-        } & {
-            id: string;
-            totalPaise: number;
-            quantity: number;
-            orderId: string;
-            productId: string;
-            unitPaise: number;
-        })[];
     } & {
         id: string;
         createdAt: Date;

@@ -73,9 +73,9 @@ export declare class QuoteController {
         status: string;
         leadId: string;
         vendorId: string;
+        customerId: string;
         razorpayOrderId: string | null;
         quoteId: string;
-        customerId: string;
         confirmedAt: Date;
         completedAt: Date | null;
         cancelledAt: Date | null;

@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SearchVendorsDto } from './dto/search-vendors.dto';
 export declare class CustomerService {
@@ -66,5 +67,82 @@ export declare class CustomerService {
         averageRating: number | null;
         responseRate: number | null;
         subscriptionTier: string | null;
+        services: {
+            id: string;
+            description: string | null;
+            title: string;
+            category: {
+                id: string;
+                name: string;
+            } | null;
+            pricePaise: number;
+            images: Prisma.JsonValue;
+        }[];
+        blockedDates: {
+            reason: string | null;
+            date: Date;
+        }[];
     }>;
+    getFavorites(userId: string): Promise<{
+        favoriteId: string;
+        createdAt: Date;
+        vendor: {
+            id: string;
+            businessName: string;
+            description: string | null;
+            pricingMin: number | null;
+            pricingMax: number | null;
+            averageRating: number | null;
+        };
+    }[]>;
+    addFavorite(userId: string, vendorId: string): Promise<{
+        id: string;
+        createdAt: Date;
+        vendorId: string;
+    }>;
+    removeFavorite(userId: string, vendorId: string): Promise<{
+        message: string;
+    }>;
+    checkFavorite(userId: string, vendorId: string): Promise<{
+        isFavorited: boolean;
+    }>;
+    startOrGetConversation(customerId: string, vendorId: string): Promise<{
+        vendor: {
+            id: string;
+            businessName: string;
+        };
+        messages: {
+            id: string;
+            createdAt: Date;
+            body: string;
+            conversationId: string;
+            senderRole: string;
+            readAt: Date | null;
+            senderId: string;
+        }[];
+    } & {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        vendorId: string;
+        customerId: string;
+    }>;
+    sendMessageAsCustomer(customerId: string, vendorId: string, body: string): Promise<{
+        id: string;
+        createdAt: Date;
+        body: string;
+        conversationId: string;
+        senderRole: string;
+        readAt: Date | null;
+        senderId: string;
+    }>;
+    getConversationMessages(customerId: string, vendorId: string): Promise<{
+        id: string;
+        createdAt: Date;
+        body: string;
+        conversationId: string;
+        senderRole: string;
+        readAt: Date | null;
+        senderId: string;
+    }[]>;
 }

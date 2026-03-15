@@ -17,6 +17,7 @@ const auth_module_1 = require("./auth/auth.module");
 const booking_module_1 = require("./booking/booking.module");
 const cloudinary_module_1 = require("./cloudinary/cloudinary.module");
 const customer_module_1 = require("./customer/customer.module");
+const feed_module_1 = require("./feed/feed.module");
 const inbox_module_1 = require("./inbox/inbox.module");
 const lead_module_1 = require("./lead/lead.module");
 const quote_module_1 = require("./quote/quote.module");
@@ -27,6 +28,7 @@ const product_module_1 = require("./product/product.module");
 const prisma_module_1 = require("./prisma/prisma.module");
 const privacy_module_1 = require("./privacy/privacy.module");
 const redis_module_1 = require("./redis/redis.module");
+const report_module_1 = require("./report/report.module");
 const review_module_1 = require("./review/review.module");
 const routing_module_1 = require("./routing/routing.module");
 const subscription_module_1 = require("./subscription/subscription.module");
@@ -91,6 +93,8 @@ exports.AppModule = AppModule = __decorate([
             payment_module_1.PaymentModule,
             product_module_1.ProductModule,
             order_module_1.OrderModule,
+            feed_module_1.FeedModule,
+            report_module_1.ReportModule,
         ],
         controllers: [AppController],
         providers: [],

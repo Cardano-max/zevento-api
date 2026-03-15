@@ -7,17 +7,23 @@ const swagger_1 = require("@nestjs/swagger");
 const app_module_1 = require("./app.module");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, { rawBody: true });
-    const allowedOrigins = process.env.CORS_ORIGINS
+    const staticOrigins = process.env.CORS_ORIGINS
         ? process.env.CORS_ORIGINS.split(',').map((o) => o.trim())
         : [
             'http://localhost:3000',
             'http://localhost:3002',
             'http://localhost:3003',
-            'https://vendor-sooty.vercel.app',
-            'https://admin-roan-one-51.vercel.app',
         ];
     app.enableCors({
-        origin: allowedOrigins,
+        origin: (origin, callback) => {
+            if (!origin)
+                return callback(null, true);
+            if (origin.endsWith('.vercel.app'))
+                return callback(null, true);
+            if (staticOrigins.includes(origin))
+                return callback(null, true);
+            callback(new Error('Not allowed by CORS'));
+        },
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true,
@@ -71,6 +77,10 @@ async function bootstrap() {
             filter: true,
             tagsSorter: 'alpha',
         },
+    });
+    const httpAdapter = app.getHttpAdapter();
+    httpAdapter.get('/health', (_req, res) => {
+        res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
     });
     const port = process.env.PORT ?? 3001;
     await app.listen(port);

@@ -10,19 +10,21 @@ import {
 } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ConsentService } from './consent.service';
 import { AuditLogService } from './audit-log.service';
 import { GrantConsentDto } from './dto/grant-consent.dto';
 import { RevokeConsentDto } from './dto/revoke-consent.dto';
 
-interface AuthenticatedRequest extends Request {
+interface AuthenticatedRequest {
   user: {
     id: string;
     activeRole?: string;
     role?: string;
   };
+  headers: Record<string, any>;
+  socket?: { remoteAddress?: string };
+  ip?: string;
 }
 
 @ApiTags('Privacy')
